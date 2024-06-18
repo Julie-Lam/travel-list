@@ -1,23 +1,36 @@
 import { useState } from "react";
 
-const initialItems = [
-  { id: 1, description: "Passports", quantity: 2, packed: false },
-  { id: 2, description: "Socks", quantity: 12, packed: false },
-  { id: 3, description: "Charger", quantity: 1, packed: true },
-];
-
 function App() {
   const [items, setItems] = useState([]);
+
   function handleAddItem(item) {
     console.log(item);
 
     setItems((items) => [...items, item]);
   }
+
+  function handleDeleteItem(id) {
+    setItems((items) => items.filter((item) => item.id !== id));
+  }
+
+  function handleCheckedItem(id) {
+    ///Return an array list of items, where the target item has status set to packed
+    setItems((items) =>
+      items.map((item) =>
+        item.id === id ? { ...item, packed: !item.packed } : item
+      )
+    );
+  }
+
   return (
     <div className="app">
       <Logo />
       <Form onAddItems={handleAddItem} />
-      <PackingList items={items} />
+      <PackingList
+        items={items}
+        onDeleteItem={handleDeleteItem}
+        onCheckedItem={handleCheckedItem}
+      />
       <Stats />
     </div>
   );
@@ -70,25 +83,35 @@ function Form({ onAddItems }) {
     </form>
   );
 }
-function PackingList({ items }) {
+function PackingList({ items, onDeleteItem, onCheckedItem }) {
   return (
     <div className="list">
       <ul>
         {items.map((i) => (
-          <PackingItem item={i} key={i.id} />
+          <PackingItem
+            item={i}
+            key={i.id}
+            onDeleteItem={onDeleteItem}
+            onCheckedItem={onCheckedItem}
+          />
         ))}
       </ul>
     </div>
   );
 }
 
-function PackingItem({ item }) {
+function PackingItem({ item, onDeleteItem, onCheckedItem }) {
   return (
     <li>
+      <input
+        type="checkbox"
+        value={item.packed}
+        onChange={() => onCheckedItem(item.id)}
+      />
       <span style={item.packed ? { textDecoration: "line-through" } : {}}>
         {item.quantity} {item.description}
       </span>
-      <button>❌</button>
+      <button onClick={() => onDeleteItem(item.id)}>❌</button>
     </li>
   );
 }
