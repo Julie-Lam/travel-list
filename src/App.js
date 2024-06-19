@@ -14,12 +14,15 @@ function App() {
   }
 
   function handleCheckedItem(id) {
+    console.log(`Started Checked! ${id}`);
     ///Return an array list of items, where the target item has status set to packed
     setItems((items) =>
       items.map((item) =>
         item.id === id ? { ...item, packed: !item.packed } : item
       )
     );
+
+    console.log(`Checked! ${id}`);
   }
 
   return (
